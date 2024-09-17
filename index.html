@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LiM Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+        }
+        .field {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            font-weight: bold;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+        }
+        .results {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        .result-section {
+            width: 48%;
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .result-item {
+            margin-bottom: 10px;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Add the Leader in Me Logo -->
+        <div class="logo-container">
+            <img src="LiM%20Logo.png" alt="Leader in Me" width="400">
+        </div>
+
+        <div class="field">
+            <label for="students">Number of Students</label>
+            <input type="number" id="students" value="700">
+        </div>
+
+        <div class="field">
+            <label for="teachers">Number of Teachers</label>
+            <input type="number" id="teachers" value="40">
+        </div>
+
+        <div class="field">
+            <label for="subscription">Subscription Type</label>
+            <select id="subscription">
+                <option value="BASIC">BASIC</option>
+                <option value="STANDARD">STANDARD</option>
+                <option value="PREMIUM">PREMIUM</option>
+            </select>
+        </div>
+
+        <div class="results" id="results"></div>
+    </div>
+
+    <script>
+        // Trigger calculation when subscription type is selected
+        document.getElementById('subscription').addEventListener('change', calculateCosts);
+        document.getElementById('students').addEventListener('input', calculateCosts);
+        document.getElementById('teachers').addEventListener('input', calculateCosts);
+
+        // Perform the calculations
+        function calculateCosts() {
+            const students = parseInt(document.getElementById('students').value);
+            const teachers = parseInt(document.getElementById('teachers').value);
+            const subscriptionType = document.getElementById('subscription').value;
+
+            // Subscription fees based on type
+            const subscriptionFees = {
+                "BASIC": 180000,
+                "STANDARD": 210000,
+                "PREMIUM": 240000
+            };
+
+            const installationFee = 250000;
+            const teacherAddOnInstallationFee = 3500; // Per teacher above 40
+            const teacherAddOnImplementationFee = 200; // Per teacher above 40
+            const studentAddOnImplementationFee = 175; // Per student above 700
+
+            const excessTeachers = Math.max(teachers - 40, 0); // Teachers over 40
+            const excessStudents = Math.max(students - 700, 0); // Students over 700
+
+            const teacherAddOnInstallationCost = excessTeachers * teacherAddOnInstallationFee;
+            const teacherAddOnImplementationCost = excessTeachers * teacherAddOnImplementationFee;
+            const studentAddOnImplementationCost = excessStudents * studentAddOnImplementationFee;
+
+            const subscriptionFee = subscriptionFees[subscriptionType];
+
+            // One-Year Contract Calculation
+            const oneYearInstallationCost = installationFee;
+            const oneYearTeacherAddOnCost = teacherAddOnInstallationCost + teacherAddOnImplementationCost;
+            const oneYearStudentAddOnCost = studentAddOnImplementationCost;
+            const oneYearTotalCost = subscriptionFee + oneYearInstallationCost + oneYearTeacherAddOnCost + oneYearStudentAddOnCost;
+            const oneYearVAT = oneYearTotalCost * 0.12;
+            const oneYearTotalWithVAT = oneYearTotalCost + oneYearVAT;
+            const oneYearPerStudentCost = oneYearTotalWithVAT / students;
+
+            // Three-Year Contract Calculation
+            const threeYearInstallationCost = installationFee; // Paid only in the first year
+            const threeYearTeacherAddOnCost = teacherAddOnInstallationCost + (teacherAddOnImplementationCost * 3);
+            const threeYearStudentAddOnCost = studentAddOnImplementationCost * 3;
+            const threeYearTotalCost = (subscriptionFee * 3) + threeYearInstallationCost + threeYearTeacherAddOnCost + threeYearStudentAddOnCost;
+            const threeYearVAT = threeYearTotalCost * 0.12;
+            const threeYearTotalWithVAT = threeYearTotalCost + threeYearVAT;
+            const threeYearPerStudentCost = threeYearTotalWithVAT / students;
+            const threeYearPerStudentCostPerYear = threeYearPerStudentCost / 3; // Per year for a three-year contract
+
+            // Display the results side by side
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = `
+                <div class="result-section">
+                    <h2>One-Year Contract</h2>
+                    <div class="result-item"><strong>Subscription Fee:</strong> ₱${subscriptionFee.toLocaleString()}</div>
+                    <div class="result-item"><strong>Installation Fee:</strong> ₱${oneYearInstallationCost.toLocaleString()}</div>
+                    <div class="result-item"><strong>Total (with VAT):</strong> ₱${oneYearTotalWithVAT.toLocaleString()}</div>
+                    <div class="result-item"><strong>Per Student Cost (with VAT):</strong> ₱${oneYearPerStudentCost.toFixed(2)}</div>
+                </div>
+                <div class="result-section">
+                    <h2>Three-Year Contract</h2>
+                    <div class="result-item"><strong>Subscription Fee:</strong> ₱${(subscriptionFee * 3).toLocaleString()}</div>
+                    <div class="result-item"><strong>Installation Fee:</strong> ₱${threeYearInstallationCost.toLocaleString()}</div>
+                    <div class="result-item"><strong>Total (with VAT):</strong> ₱${threeYearTotalWithVAT.toLocaleString()}</div>
+                    <div class="result-item"><strong>Per Student Cost (with VAT, per year):</strong> ₱${threeYearPerStudentCostPerYear.toFixed(2)}</div>
+                </div>
+            `;
+        }
+
+        // Trigger initial calculation
+        calculateCosts();
+    </script>
+
+</body>
+</html>
