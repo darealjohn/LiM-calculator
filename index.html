@@ -25,6 +25,14 @@
             padding: 8px;
             margin-top: 5px;
         }
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .checkbox-container input[type="checkbox"] {
+            margin-right: 10px;
+        }
         .results {
             display: flex;
             justify-content: space-between;
@@ -63,6 +71,7 @@
             <input type="number" id="teachers" value="40">
         </div>
 
+        <!-- Subscription Type -->
         <div class="field">
             <label for="subscription">Subscription Type</label>
             <select id="subscription">
@@ -72,20 +81,28 @@
             </select>
         </div>
 
+        <!-- Out of Town Checkbox -->
+        <div class="checkbox-container">
+            <input type="checkbox" id="outOfTown">
+            <label for="outOfTown">Out of Town</label>
+        </div>
+
         <div class="results" id="results"></div>
     </div>
 
     <script>
-        // Trigger calculation when subscription type is selected
+        // Trigger calculation when inputs change
         document.getElementById('subscription').addEventListener('change', calculateCosts);
         document.getElementById('students').addEventListener('input', calculateCosts);
         document.getElementById('teachers').addEventListener('input', calculateCosts);
+        document.getElementById('outOfTown').addEventListener('change', calculateCosts);
 
         // Perform the calculations
         function calculateCosts() {
             const students = parseInt(document.getElementById('students').value);
             const teachers = parseInt(document.getElementById('teachers').value);
             const subscriptionType = document.getElementById('subscription').value;
+            const outOfTown = document.getElementById('outOfTown').checked;
 
             // Subscription fees based on type
             const subscriptionFees = {
@@ -106,7 +123,16 @@
             const teacherAddOnImplementationCost = excessTeachers * teacherAddOnImplementationFee;
             const studentAddOnImplementationCost = excessStudents * studentAddOnImplementationFee;
 
-            const subscriptionFee = subscriptionFees[subscriptionType];
+            // Adjust subscription fee if "Out of Town" is selected (10% increase for the first year)
+            let subscriptionFee = subscriptionFees[subscriptionType];
+            let subscriptionFeeForThreeYear = subscriptionFees[subscriptionType];
+            
+            if (outOfTown) {
+                subscriptionFee += subscriptionFee * 0.10;  // For one-year contract
+                subscriptionFeeForThreeYear = (subscriptionFeeForThreeYear * 1.10) + (subscriptionFeeForThreeYear * 2); // 10% only for the first year in a three-year contract
+            } else {
+                subscriptionFeeForThreeYear = subscriptionFees[subscriptionType] * 3;  // No change for three-year subscription if out of town is not checked
+            }
 
             // One-Year Contract Calculation
             const oneYearInstallationCost = installationFee;
@@ -121,7 +147,7 @@
             const threeYearInstallationCost = installationFee; // Paid only in the first year
             const threeYearTeacherAddOnCost = teacherAddOnInstallationCost + (teacherAddOnImplementationCost * 3);
             const threeYearStudentAddOnCost = studentAddOnImplementationCost * 3;
-            const threeYearTotalCost = (subscriptionFee * 3) + threeYearInstallationCost + threeYearTeacherAddOnCost + threeYearStudentAddOnCost;
+            const threeYearTotalCost = subscriptionFeeForThreeYear + threeYearInstallationCost + threeYearTeacherAddOnCost + threeYearStudentAddOnCost;
             const threeYearVAT = threeYearTotalCost * 0.12;
             const threeYearTotalWithVAT = threeYearTotalCost + threeYearVAT;
             const threeYearPerStudentCost = threeYearTotalWithVAT / students;
@@ -139,7 +165,7 @@
                 </div>
                 <div class="result-section">
                     <h2>Three-Year Contract</h2>
-                    <div class="result-item"><strong>Subscription Fee:</strong> ₱${(subscriptionFee * 3).toLocaleString()}</div>
+                    <div class="result-item"><strong>Subscription Fee:</strong> ₱${subscriptionFeeForThreeYear.toLocaleString()}</div>
                     <div class="result-item"><strong>Installation Fee:</strong> ₱${threeYearInstallationCost.toLocaleString()}</div>
                     <div class="result-item"><strong>Total (with VAT):</strong> ₱${threeYearTotalWithVAT.toLocaleString()}</div>
                     <div class="result-item"><strong>Per Student Cost (with VAT, per year):</strong> ₱${threeYearPerStudentCostPerYear.toFixed(2)}</div>
