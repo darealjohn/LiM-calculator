@@ -3,180 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiM Calculator</title>
+    <title>LeaderU Calculator</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            text-align: left;
         }
         .container {
-            max-width: 800px;
-            margin: auto;
+            max-width: 600px;
+            margin: 0 auto;
         }
-        .field {
-            margin-bottom: 10px;
-        }
-        label {
+        img {
+            max-width: 100%;
+            height: auto;
             display: block;
-            font-weight: bold;
+            margin: 0 auto 20px;
         }
-        input[type="number"], select {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-        }
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            margin-top: 10px;
-        }
-        .checkbox-container input[type="checkbox"] {
-            margin-right: 10px;
-        }
-        .results {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .result-section {
-            width: 48%;
-            background-color: #f0f0f0;
-            padding: 15px;
-            border-radius: 8px;
-        }
-        .result-item {
-            margin-bottom: 10px;
-        }
-        .logo-container {
-            text-align: center;
+        .section {
             margin-bottom: 20px;
+        }
+        .divider {
+            border-top: 1px solid #ccc;
+            margin: 20px 0;
+        }
+        .result {
+            margin-top: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <!-- Add the Leader in Me Logo -->
-        <div class="logo-container">
-            <img src="LiM%20Logo.png" alt="Leader in Me" width="400">
+        <img src="LeaderU Logo.png" alt="LeaderU Logo">
+
+        <div class="section">
+            <h3>Students</h3>
+            <label for="numStudents">Number of students:</label>
+            <input type="number" id="numStudents" value="" oninput="updateContractOptions('Students'); calculateTotals()"><br>
+
+            <label for="bandStudents">Band:</label>
+            <select id="bandStudents" disabled>
+                <option value="">Select Band</option>
+                <option value="A">Band A (1-100 pax)</option>
+                <option value="B">Band B (101-200 pax)</option>
+                <option value="C">Band C (201-350 pax)</option>
+                <option value="D">Band D (351-600 pax)</option>
+                <option value="E">Band E (601-1000 pax)</option>
+                <option value="F">Band F (1001-2500 pax)</option>
+                <option value="G">Band G (2501-5000 pax)</option>
+                <option value="H">Band H (5001-10000 pax)</option>
+                <option value="I">Band I (10001-20000 pax)</option>
+            </select><br>
+
+            <label for="contractStudents">Select Contract Duration:</label>
+            <select id="contractStudents" onchange="calculateTotals()">
+                <option value="1">1 year</option>
+                <option value="2">2 years</option>
+                <option value="3">3 years</option>
+            </select><br>
+
+            <div class="result">
+                Total: <span id="totalStudents">₱0.00</span><br>
+                Fee per student: <span id="feePerStudent">₱0.00</span>
+            </div>
         </div>
 
-        <div class="field">
-            <label for="students">Number of Students</label>
-            <input type="number" id="students" value="700">
+        <div class="divider"></div>
+
+        <div class="section">
+            <h3>Teachers</h3>
+            <label for="numTeachers">Number of teachers:</label>
+            <input type="number" id="numTeachers" value="" oninput="updateContractOptions('Teachers'); calculateTotals()"><br>
+
+            <label for="bandTeachers">Band:</label>
+            <select id="bandTeachers" disabled>
+                <option value="">Select Band</option>
+                <option value="A">Band A (1-100 pax)</option>
+                <option value="B">Band B (101-200 pax)</option>
+                <option value="C">Band C (201-350 pax)</option>
+                <option value="D">Band D (351-600 pax)</option>
+                <option value="E">Band E (601-1000 pax)</option>
+                <option value="F">Band F (1001-2500 pax)</option>
+                <option value="G">Band G (2501-5000 pax)</option>
+                <option value="H">Band H (5001-10000 pax)</option>
+                <option value="I">Band I (10001-20000 pax)</option>
+            </select><br>
+
+            <label for="contractTeachers">Select Contract Duration:</label>
+            <select id="contractTeachers" onchange="calculateTotals()">
+                <option value="1">1 year</option>
+                <option value="2">2 years</option>
+                <option value="3">3 years</option>
+            </select><br>
+
+            <div class="result">
+                Total: <span id="totalTeachers">₱0.00</span><br>
+                Fee per teacher: <span id="feePerTeacher">₱0.00</span>
+            </div>
         </div>
 
-        <div class="field">
-            <label for="teachers">Number of Teachers</label>
-            <input type="number" id="teachers" value="40">
+        <div class="divider"></div>
+
+        <div class="section">
+            <h3>Out of Town</h3>
+            <label>
+                <input type="checkbox" id="outOfTown" onchange="calculateTotals()"> Out of Town
+            </label>
         </div>
 
-        <!-- Subscription Type -->
-        <div class="field">
-            <label for="subscription">Subscription Type</label>
-            <select id="subscription">
-                <option value="BASIC">BASIC</option>
-                <option value="STANDARD">STANDARD</option>
-                <option value="PREMIUM">PREMIUM</option>
-            </select>
-        </div>
+        <div class="divider"></div>
 
-        <!-- Out of Town Checkbox -->
-        <div class="checkbox-container">
-            <input type="checkbox" id="outOfTown">
-            <label for="outOfTown">Out of Town</label>
-        </div>
+        <div class="section">
+            <h3>Totals</h3>
+            <div class="result">
+                Annual License Fee: ₱50,000<br>
+                Contract Duration: <span id="contractDuration">1 year</span><br>
+                Subtotal (per year): <span id="subtotal">₱0.00</span><br>
+                12% VAT (per year): <span id="vat">₱0.00</span><br>
+                Grand Total (per year): <span id="grandTotal">₱0.00</span><br>
+            </div>
 
-        <div class="results" id="results"></div>
+            <br>
+            <div class="result">
+                Full Contract Total: <span id="fullContractTotal">₱0.00</span>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Trigger calculation when inputs change
-        document.getElementById('subscription').addEventListener('change', calculateCosts);
-        document.getElementById('students').addEventListener('input', calculateCosts);
-        document.getElementById('teachers').addEventListener('input', calculateCosts);
-        document.getElementById('outOfTown').addEventListener('change', calculateCosts);
+        const annualLicenseFee = 50000;
+        const studentPrices = {
+            A: { 1: 2050.00 },
+            B: { 1: 1712.50 },
+            C: { 1: 1557.14 },
+            D: { 1: 1475.00, 2: 1445.50, 3: 1430.75 },
+            E: { 1: 1362.50, 2: 1335.25, 3: 1321.63 },
+            F: { 1: 1255.00, 2: 1229.90, 3: 1217.35 },
+            G: { 1: 1144.25, 2: 1121.61, 3: 1110.17 },
+            H: { 1: 1035.00, 2: 1015.04, 3: 1004.68 },
+            I: { 1: 1000.00, 2: 990.00, 3: 980.00 }
+        };
 
-        // Perform the calculations
-        function calculateCosts() {
-            const students = parseInt(document.getElementById('students').value);
-            const teachers = parseInt(document.getElementById('teachers').value);
-            const subscriptionType = document.getElementById('subscription').value;
-            const outOfTown = document.getElementById('outOfTown').checked;
+        const teacherPrices = {
+            A: { 1: 3997.50 },
+            B: { 1: 3339.38 },
+            C: { 1: 3036.43 },
+            D: { 1: 2876.25, 2: 2818.73, 3: 2789.96 },
+            E: { 1: 2656.88, 2: 2603.74, 3: 2577.17 },
+            F: { 1: 2447.25, 2: 2398.31, 3: 2373.83 },
+            G: { 1: 2231.78, 2: 2187.14, 3: 2164.82 },
+            H: { 1: 2019.71, 2: 1979.32, 3: 1959.12 },
+            I: { 1: 1800.00, 2: 1750.00, 3: 1700.00 }
+        };
 
-            // Subscription fees based on type
-            const subscriptionFees = {
-                "BASIC": 180000,
-                "STANDARD": 210000,
-                "PREMIUM": 240000
-            };
-
-            const installationFee = 250000;
-            const teacherAddOnInstallationFee = 3500; // Per teacher above 40
-            const teacherAddOnImplementationFee = 200; // Per teacher above 40
-            const studentAddOnImplementationFee = 175; // Per student above 700
-
-            const excessTeachers = Math.max(teachers - 40, 0); // Teachers over 40
-            const excessStudents = Math.max(students - 700, 0); // Students over 700
-
-            const teacherAddOnInstallationCost = excessTeachers * teacherAddOnInstallationFee;
-            const teacherAddOnImplementationCost = excessTeachers * teacherAddOnImplementationFee;
-            const studentAddOnImplementationCost = excessStudents * studentAddOnImplementationFee;
-
-            // Adjust subscription fee if "Out of Town" is selected (10% increase for the first year)
-            let subscriptionFee = subscriptionFees[subscriptionType];
-            let subscriptionFeeForThreeYear = subscriptionFees[subscriptionType];
-            
-            if (outOfTown) {
-                subscriptionFee += subscriptionFee * 0.10;  // For one-year contract
-                subscriptionFeeForThreeYear = (subscriptionFeeForThreeYear * 1.10) + (subscriptionFeeForThreeYear * 2); // 10% only for the first year in a three-year contract
-            } else {
-                subscriptionFeeForThreeYear = subscriptionFees[subscriptionType] * 3;  // No change for three-year subscription if out of town is not checked
+        function updateContractOptions(type) {
+            let band;
+            if (type === 'Students') {
+                band = getBand(parseInt(document.getElementById('numStudents').value));
+            } else if (type === 'Teachers') {
+                band = getBand(parseInt(document.getElementById('numTeachers').value));
             }
 
-            // One-Year Contract Calculation
-            const oneYearInstallationCost = installationFee;
-            const oneYearTeacherAddOnCost = teacherAddOnInstallationCost + teacherAddOnImplementationCost;
-            const oneYearStudentAddOnCost = studentAddOnImplementationCost;
-            const oneYearTotalCost = subscriptionFee + oneYearInstallationCost + oneYearTeacherAddOnCost + oneYearStudentAddOnCost;
-            const oneYearVAT = oneYearTotalCost * 0.12;
-            const oneYearTotalWithVAT = oneYearTotalCost + oneYearVAT;
-            const oneYearPerStudentCost = oneYearTotalWithVAT / students;
+            const contractSelect = document.getElementById(type === 'Students' ? 'contractStudents' : 'contractTeachers');
 
-            // Three-Year Contract Calculation
-            const threeYearInstallationCost = installationFee; // Paid only in the first year
-            const threeYearTeacherAddOnCost = teacherAddOnInstallationCost + (teacherAddOnImplementationCost * 3);
-            const threeYearStudentAddOnCost = studentAddOnImplementationCost * 3;
-            const threeYearTotalCost = subscriptionFeeForThreeYear + threeYearInstallationCost + threeYearTeacherAddOnCost + threeYearStudentAddOnCost;
-            const threeYearVAT = threeYearTotalCost * 0.12;
-            const threeYearTotalWithVAT = threeYearTotalCost + threeYearVAT;
-            const threeYearPerStudentCost = threeYearTotalWithVAT / students;
-            const threeYearPerStudentCostPerYear = threeYearPerStudentCost / 3; // Per year for a three-year contract
+            // Reset options
+            contractSelect.innerHTML = '';
 
-            // Display the results side by side
-            const resultsDiv = document.getElementById('results');
-            resultsDiv.innerHTML = `
-                <div class="result-section">
-                    <h2>One-Year Contract</h2>
-                    <div class="result-item"><strong>Subscription Fee:</strong> ₱${subscriptionFee.toLocaleString()}</div>
-                    <div class="result-item"><strong>Installation Fee:</strong> ₱${oneYearInstallationCost.toLocaleString()}</div>
-                    <div class="result-item"><strong>Total (with VAT):</strong> ₱${oneYearTotalWithVAT.toLocaleString()}</div>
-                    <div class="result-item"><strong>Per Student Cost (with VAT):</strong> ₱${oneYearPerStudentCost.toFixed(2)}</div>
-                </div>
-                <div class="result-section">
-                    <h2>Three-Year Contract</h2>
-                    <div class="result-item"><strong>Subscription Fee:</strong> ₱${subscriptionFeeForThreeYear.toLocaleString()}</div>
-                    <div class="result-item"><strong>Installation Fee:</strong> ₱${threeYearInstallationCost.toLocaleString()}</div>
-                    <div class="result-item"><strong>Total (with VAT):</strong> ₱${threeYearTotalWithVAT.toLocaleString()}</div>
-                    <div class="result-item"><strong>Per Student Cost (with VAT, per year):</strong> ₱${threeYearPerStudentCostPerYear.toFixed(2)}</div>
-                </div>
-            `;
+            // Add 1-year contract option for all bands
+            contractSelect.add(new Option("1 year", "1"));
+
+            // Add 2-year and 3-year contract options for Bands D-I
+            if (['D', 'E', 'F', 'G', 'H', 'I'].includes(band)) {
+                contractSelect.add(new Option("2 years", "2"));
+                contractSelect.add(new Option("3 years", "3"));
+            }
         }
 
-        // Trigger initial calculation
-        calculateCosts();
-    </script>
+        function calculateTotals() {
+            const numStudents = parseInt(document.getElementById('numStudents').value) || 0;
+            const numTeachers = parseInt(document.getElementById('numTeachers').value) || 0;
+            const isOutOfTown = document.getElementById('outOfTown').checked;
 
+            const contractDuration = parseInt(document.getElementById('contractStudents').value) || 1;
+
+            // Update the displayed contract duration
+            document.getElementById('contractDuration').innerText = contractDuration + " year" + (contractDuration > 1 ? "s" : "");
+
+            // Determine band and update dropdowns
+            document.getElementById('bandStudents').value = getBand(numStudents);
+            document.getElementById('bandTeachers').value = getBand(numTeachers);
+
+            const totalStudents = numStudents * (studentPrices[getBand(numStudents)][contractDuration] || 0);
+            const totalTeachers = numTeachers * (teacherPrices[getBand(numTeachers)][contractDuration] || 0);
+
+            document.getElementById('totalStudents').innerText = formatCurrency(totalStudents);
+            document.getElementById('feePerStudent').innerText = formatCurrency(studentPrices[getBand(numStudents)][contractDuration] || 0);
+            
+            document.getElementById('totalTeachers').innerText = formatCurrency(totalTeachers);
+            document.getElementById('feePerTeacher').innerText = formatCurrency(teacherPrices[getBand(numTeachers)][contractDuration] || 0);
+
+            const annualTotal = totalTeachers + annualLicenseFee; // Add the annual license fee here before VAT
+            let outOfTownFee = 0;
+
+            if (isOutOfTown) {
+                outOfTownFee = annualTotal * 0.10; // 10% of the sum of the annual license fee and the total teachers
+            }
+
+            const subtotal = totalStudents + totalTeachers + outOfTownFee + annualLicenseFee; // Add annual license fee to subtotal
+            const vat = subtotal * 0.12; // Apply 12% VAT on the new subtotal
+            const grandTotalPerYear = subtotal + vat;
+
+            document.getElementById('subtotal').innerText = formatCurrency(subtotal);
+            document.getElementById('vat').innerText = formatCurrency(vat);
+            document.getElementById('grandTotal').innerText = formatCurrency(grandTotalPerYear);
+
+            const fullContractTotal = grandTotalPerYear * contractDuration;
+            document.getElementById('fullContractTotal').innerText = formatCurrency(fullContractTotal);
+        }
+
+        function getBand(pax) {
+            if (pax <= 100) return 'A';
+            if (pax <= 200) return 'B';
+            if (pax <= 350) return 'C';
+            if (pax <= 600) return 'D';
+            if (pax <= 1000) return 'E';
+            if (pax <= 2500) return 'F';
+            if (pax <= 5000) return 'G';
+            if (pax <= 10000) return 'H';
+            if (pax <= 20000) return 'I';
+            return '';
+        }
+
+        function formatCurrency(value) {
+            return '₱' + value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    </script>
 </body>
 </html>
-
